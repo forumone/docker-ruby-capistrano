@@ -1,0 +1,21 @@
+steps:
+  - label: ":hammer: Build"
+    branches: "!main"
+
+    commands:
+      - docker build .
+
+  - label: ":hammer: Build and Push"
+    branches: main
+
+    commands:
+      - docker build . --tag forumone/ruby-capistrano:2.3
+      - docker push forumone/ruby-capistrano:2.3
+
+    plugins:
+      - seek-oss/aws-sm#v2.0.0:
+          env:
+            DOCKER_LOGIN_PASSWORD: buildkite/dockerhubid
+      - docker-login#v2.0.1:
+          username: f1builder
+          password-env: DOCKER_LOGIN_PASSWORD
